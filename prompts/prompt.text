@@ -37,15 +37,11 @@ Step-by-Step Instructions
 
 7. Observe and Report
    - After clicking "Document Search" or executing the iframe fallback:
-     - The Clinical Inbox should display Jammy J. Willer's lab/imaging results, including CBC tests and MRI results with normal/abnormal statuses.
-
-Notes on Tier Group in Clinical Inbox
-- The Tier Group level ID for the search results is 107 tasks associated with the 16.11 Testing department.
-
+     
 Common Issues and Solutions
 - Element Not Found: Ensure the iframe is fully loaded (wait for 5–10 seconds).
-- Button Not Clickable: Refresh the page and try again.
+- Button Not Clickable: try to force click button again.
 - Network Errors: Verify your internet connection and retry the login process.
 
 Result
-- After following the steps, the Clinical Inbox displays lab/imaging results for Jammy J. Willer with task updates. The task is completed successfully.
+- After following the steps, patient lab reports will be displayed. The task is completed successfully.
