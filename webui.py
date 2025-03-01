@@ -897,11 +897,26 @@ def create_ui(config, theme_name="Ocean"):
                     run_button = gr.Button("▶️ Run Agent", variant="primary", scale=2)
                     stop_button = gr.Button("⏹️ Stop", variant="stop", scale=1)
                     
+                # with gr.Row():
+                #     browser_view = gr.HTML(
+                #         value="<h1 style='width:80vw; height:50vh'>Waiting for browser session...</h1>",
+                #         label="Live Browser View",
+                # )
+
                 with gr.Row():
-                    browser_view = gr.HTML(
-                        value="<h1 style='width:80vw; height:50vh'>Waiting for browser session...</h1>",
-                        label="Live Browser View",
-                )
+                    gr.HTML(
+                        """
+                        <iframe 
+                            src="http://localhost:6081/vnc.html?autoconnect=true&resize=scale" 
+                            width="100%" 
+                            height="600px" 
+                            frameborder="0"
+                            allow="clipboard-read; clipboard-write"
+                            style="margin-top: 20px;"
+                            allowfullscreen>
+                        </iframe>
+                        """
+                    )
             
             with gr.TabItem("🧐 Deep Research", id=5):
                 research_task_input = gr.Textbox(label="Research Task", lines=5, value="Compose a report on the use of Reinforcement Learning for training Large Language Models, encompassing its origins, current advancements, and future prospects, substantiated with examples of relevant models and techniques. The report should reflect original insights and analysis, moving beyond mere summarization of existing literature.")
@@ -961,7 +976,7 @@ def create_ui(config, theme_name="Ocean"):
                             enable_recording, task, add_infos, max_steps, use_vision, max_actions_per_step, tool_calling_method
                         ],
                     outputs=[
-                        browser_view,           # Browser view
+                        # browser_view,           # Browser view
                         final_result_output,    # Final result
                         errors_output,          # Errors
                         model_actions_output,   # Model actions
