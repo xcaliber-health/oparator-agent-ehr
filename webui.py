@@ -712,10 +712,14 @@ def create_ui(config, theme_name="custom_theme"):
         border-radius: 10px;
     }
     """
-
+    custom_favicon = """
+        <link rel="icon" type="image/png" href="logo.png">
+        """
+    
     with gr.Blocks(
             title="EHR Operator", theme=theme_map[theme_name], css="body { display: flex; justify-content: center; } #main-container { max-width: 1200px; width: 100%; }"
     ) as demo:
+        gr.HTML(custom_favicon)
         
         with gr.Row():
             gr.Markdown(
@@ -1593,7 +1597,7 @@ def main():
     config_dict = default_config()
 
     demo = create_ui(config_dict, theme_name=args.theme)
-    demo.launch(server_name=args.ip, server_port=args.port)
+    demo.launch(server_name=args.ip, server_port=args.port,favicon_path="logo.png")
 
 if __name__ == '__main__':
     main()
