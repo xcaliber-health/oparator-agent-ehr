@@ -32,6 +32,7 @@ from src.agent.custom_prompts import CustomSystemPrompt, CustomAgentMessagePromp
 from src.browser.custom_context import BrowserContextConfig, CustomBrowserContext
 from src.controller.custom_controller import CustomController
 from gradio.themes import Citrus, Default, Glass, Monochrome, Ocean, Origin, Soft, Base
+from custom_theme import custom_theme
 from src.utils.default_config_settings import default_config, load_config_from_file, save_config_to_file, save_current_config, update_ui_from_config
 from src.utils.utils import update_model_dropdown, get_latest_files, capture_screenshot
 
@@ -73,6 +74,9 @@ def open_modal():
 
 def close_modal():
     return gr.update(visible=False)
+
+def show_iframe():
+    return gr.update(visible=True)
 
 async def stop_agent():
     """Request the agent to stop and update UI with enhanced feedback"""
@@ -650,7 +654,8 @@ theme_map = {
     "Origin": Origin(),
     "Citrus": Citrus(),
     "Ocean": Ocean(),
-    "Base": Base()
+    "Base": Base(),
+    "custom_theme": custom_theme()
 }
 
 async def close_global_browser():
@@ -690,7 +695,7 @@ async def run_deep_search(research_task, max_search_iteration_input, max_query_p
     return markdown_content, file_path, gr.update(value="Stop", interactive=True),  gr.update(interactive=True) 
     
 
-def create_ui(config, theme_name="Ocean"):
+def create_ui(config, theme_name="custom_theme"):
     css = """
     .gradio-container {
         max-width: 1200px !important;
@@ -711,22 +716,25 @@ def create_ui(config, theme_name="Ocean"):
     with gr.Blocks(
             title="EHR Operator", theme=theme_map[theme_name], css="body { display: flex; justify-content: center; } #main-container { max-width: 1200px; width: 100%; }"
     ) as demo:
+        
         with gr.Row():
             gr.Markdown(
                 """
                 <h1 style="font-size: 2.5em; font-weight: 800; text-align: center;">🌐 EHR Operator</h1>
-                <h3 style="font-size: 1.5em; font-weight: 600; text-align: center;">Control your browser with AI assistance</h3>
+                <h3 style="font-size: 1.5em; font-weight: 600; text-align: center;">Control your EHR via prompts</h3>
                 """,
                 elem_classes=["header-text"],
             )
 
-        with gr.Blocks(elem_id="main-container"):  
-            with gr.Row(equal_height=True):  
-                with gr.Column(scale=2, min_width=480, elem_id="left-column"):  
+                
+        with gr.Blocks(elem_id="main-container"):
+            # Main Row (Contains left-column and right-column iframe)
+            with gr.Row(equal_height=True):
+                with gr.Column(scale=2, min_width=480, elem_id="left-column"):
                     with gr.Group():
                         task = gr.Textbox(
                             label="Task Description",
-                            lines=10,  
+                            lines=10,
                             placeholder="Enter your task here...",
                             value=config['task'],
                             info="Describe what you want the agent to do",
@@ -740,25 +748,29 @@ def create_ui(config, theme_name="Ocean"):
                         )
 
                     with gr.Row():
-                        run_button = gr.Button("▶️ Run Agent", variant="primary", scale=1)
-                        stop_button = gr.Button("⏹️ Stop", variant="stop", scale=1)
+                        run_button = gr.Button("Run Agent", variant="primary", scale=1)
+                        stop_button = gr.Button("Stop", variant="stop", scale=1)
 
-                with gr.Column(scale=3, min_width=720, elem_id="right-column"):  
+                # Initially hidden iframe column inside the SAME Row
+                with gr.Column(scale=3, min_width=720, elem_id="right-column", visible=False) as iframe_row:
                     gr.HTML(
-                    """
-                    <div style="height: 580px; width: 100%; margin: 0 !important; padding: 0 !important; display: flex; align-items: center; justify-content: center;">
-                        <iframe 
-                            src="http://localhost:6081/vnc.html?autoconnect=true&resize=scale" 
-                            width="100%" 
-                            height="100%" 
-                            frameborder="0"
-                            style="margin: 0 !important; padding: 0 !important; border: none !important; display: block !important; box-sizing: border-box;"
-                            allow="clipboard-read; clipboard-write"
-                            allowfullscreen>
-                        </iframe>
-                    </div>
-                    """
-                )
+                        """
+                        <div style="height: 580px; width: 100%; margin: 0 !important; padding: 0 !important; display: flex; align-items: center; justify-content: center;">
+                            <iframe 
+                                src="http://localhost:6081/vnc.html?autoconnect=true&resize=scale" 
+                                width="100%" 
+                                height="100%" 
+                                frameborder="0"
+                                style="margin: 0 !important; padding: 0 !important; border: none !important; display: block !important; box-sizing: border-box;"
+                                allow="clipboard-read; clipboard-write"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        """
+                    )
+
+            # Button click will now reveal the iframe in the SAME row
+            run_button.click(show_iframe, outputs=iframe_row)
 
 
         gr.HTML(
@@ -1574,7 +1586,7 @@ def main():
     parser = argparse.ArgumentParser(description="Gradio UI for Browser Agent")
     parser.add_argument("--ip", type=str, default="127.0.0.1", help="IP address to bind to")
     parser.add_argument("--port", type=int, default=7788, help="Port to listen on")
-    parser.add_argument("--theme", type=str, default="Ocean", choices=theme_map.keys(), help="Theme to use for the UI")
+    parser.add_argument("--theme", type=str, default="custom_theme", choices=theme_map.keys(), help="Theme to use for the UI")
     parser.add_argument("--dark-mode", action="store_true", help="Enable dark mode")
     args = parser.parse_args()
 
