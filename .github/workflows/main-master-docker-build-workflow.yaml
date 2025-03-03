@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build and tag DEV docker image
+      - name: Build and tag Main,Master docker image
         run: docker build -t ${{ secrets.PACKAGE_URL }}/${{ secrets.REGISTRY_USERNAME }}/oparator-agent-ehr:${{ github.sha }} .
 
       - name: Login to Github Packages
@@ -26,6 +26,6 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.GHCR_PAT }}
 
-      - name: Publish DEV docker image to GPR
+      - name: Publish Main,Master docker image to GPR
         run: docker push ${{ secrets.PACKAGE_URL }}/${{ secrets.REGISTRY_USERNAME }}/oparator-agent-ehr:${{ github.sha }}
 
