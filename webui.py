@@ -1,5 +1,8 @@
 import pdb
 import logging
+import requests
+
+
 
 from dotenv import load_dotenv
 
@@ -75,8 +78,8 @@ def open_modal():
 def close_modal():
     return gr.update(visible=False)
 
-def show_iframe():
-    return gr.update(visible=True)
+def show_iframe_and_save():
+    return gr.update(visible=True), gr.update(visible=True)
 
 async def stop_agent():
     """Request the agent to stop and update UI with enhanced feedback"""
@@ -693,7 +696,48 @@ async def run_deep_search(research_task, max_search_iteration_input, max_query_p
                                                         )
     
     return markdown_content, file_path, gr.update(value="Stop", interactive=True),  gr.update(interactive=True) 
+import requests
+
+
+def send_post_request(title, task):
+    try:
+        print(f"🔍 title: {title}, task: {task}")
+
+        base_url = os.getenv("BASE_URL")
+        if not base_url:
+            raise ValueError("BASE_URL environment variable is not set")
+
+        url = f"{base_url}/agent/operations"
+        payload = {
+            "title": title,
+            "prompt": task  
+        }
+        headers = {"Content-Type": "application/json"}
+
+        print(f"📦 Payload: {payload}")  
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        print(f"🛑 Response Status Code: {response.status_code}")
+        print(f"📩 Response Content: {response.text}")
+
+        response.raise_for_status()  # Raises an HTTPError for bad responses (4xx and 5xx)
+        
+        return "Title and Task saved successfully!"
     
+    except requests.exceptions.RequestException as e:
+        print(f" Request Error: {e}")
+        return f"Error: {e}"
+    
+    except ValueError as ve:
+        print(f" Value Error: {ve}")
+        return str(ve)
+
+    except Exception as ex:
+        print(f"⚠️ Unexpected Error: {ex}")
+        return f"Unexpected Error: {ex}"
+
+
 
 def create_ui(config, theme_name="custom_theme"):
     css = """
@@ -711,42 +755,58 @@ def create_ui(config, theme_name="custom_theme"):
         padding: 15px;
         border-radius: 10px;
     }
+    footer {
+        display: none !important;  /* Hide the footer */
+    }
+    #built-with-gradio, #settings {
+        display: none !important;
+    }
     """
     custom_favicon = """
         <link rel="icon" type="image/png" href="logo.png">
         """
     
+
+
+
     with gr.Blocks(
-            title="EHR Operator", theme=theme_map[theme_name], css="body { display: flex; justify-content: center; } #main-container { max-width: 1200px; width: 100%; }"
+            title="EHR Operator", theme=theme_map[theme_name], css="body { display: flex; justify-content: center; } #main-container { max-width: 1200px; width: 100%; } footer { display: none !important; }"
     ) as demo:
         gr.HTML(custom_favicon)
         
-        with gr.Row():
-            gr.Markdown(
-                """
-                <h1 style="font-size: 2.5em; font-weight: 800; text-align: center;">🌐 EHR Operator</h1>
-                <h3 style="font-size: 1.5em; font-weight: 600; text-align: center;">Control your EHR via prompts</h3>
-                """,
-                elem_classes=["header-text"],
-            )
+        # with gr.Row():
+        #     gr.Markdown(
+        #         """
+        #         <h1 style="font-size: 2.5em; font-weight: 800; text-align: center;">🌐 EHR Operator</h1>
+        #         <h3 style="font-size: 1.5em; font-weight: 600; text-align: center;">Control your EHR via prompts</h3>
+        #         """,
+        #         elem_classes=["header-text"],
+        #     )
 
                 
         with gr.Blocks(elem_id="main-container"):
             # Main Row (Contains left-column and right-column iframe)
             with gr.Row(equal_height=True):
-                with gr.Column(scale=2, min_width=480, elem_id="left-column"):
+                with gr.Column(scale=1, min_width=480, elem_id="left-column"):
                     with gr.Group():
+                        title = gr.Textbox(
+                            label="Operation Title",
+                            lines=1,
+                            placeholder="Enter your title here...",
+                            value="Sample Title",
+                        )
+
                         task = gr.Textbox(
                             label="Task Description",
                             lines=10,
                             placeholder="Enter your task here...",
-                            value=config['task'],
+                            value="Your Task Here",
                             info="Describe what you want the agent to do",
                         )
 
                         add_infos = gr.Textbox(
                             label="Additional Information",
-                            lines=7,
+                            lines=4,
                             placeholder="Add any helpful context or instructions...",
                             info="Optional hints to help the LLM complete the task",
                         )
@@ -754,14 +814,14 @@ def create_ui(config, theme_name="custom_theme"):
                     with gr.Row():
                         run_button = gr.Button("Run Agent", variant="primary", scale=1)
                         stop_button = gr.Button("Stop", variant="stop", scale=1)
-
+                        save_button = gr.Button("Save", variant="secondary", scale=1, visible=False)  # Initially Hidden
                 # Initially hidden iframe column inside the SAME Row
                 with gr.Column(scale=3, min_width=720, elem_id="right-column", visible=False) as iframe_row:
                     gr.HTML(
                         """
                         <div style="height: 580px; width: 100%; margin: 0 !important; padding: 0 !important; display: flex; align-items: center; justify-content: center;">
                             <iframe 
-                                src="http://localhost:6081/vnc.html?autoconnect=true&resize=scale" 
+                                src="http://localhost:6080/vnc.html?autoconnect=true&resize=scale" 
                                 width="100%" 
                                 height="100%" 
                                 frameborder="0"
@@ -774,7 +834,11 @@ def create_ui(config, theme_name="custom_theme"):
                     )
 
             # Button click will now reveal the iframe in the SAME row
-            run_button.click(show_iframe, outputs=iframe_row)
+            run_button.click(show_iframe_and_save, outputs=[iframe_row, save_button])
+            
+            # Save button click triggers POST request
+            save_button.click(send_post_request, inputs=[title, task], outputs=None)
+
 
 
         gr.HTML(
@@ -797,7 +861,7 @@ def create_ui(config, theme_name="custom_theme"):
         )
 
         with gr.Row(elem_id="settings-button-container"):
-            open_modal_button = gr.Button("⚙️", variant="secondary", elem_id="settings-button")
+            open_modal_button = gr.Button("⚙️", variant="secondary", elem_id="settings-button",visible =False)
 
 
         # Modal Container (Initially Hidden)
@@ -1597,7 +1661,8 @@ def main():
     config_dict = default_config()
 
     demo = create_ui(config_dict, theme_name=args.theme)
-    demo.launch(server_name=args.ip, server_port=args.port,favicon_path="logo.png")
+    demo.queue(False)
+    demo.launch(server_name=args.ip, server_port=args.port,favicon_path="logo.png",show_api=False,share=True)
 
 if __name__ == '__main__':
     main()
