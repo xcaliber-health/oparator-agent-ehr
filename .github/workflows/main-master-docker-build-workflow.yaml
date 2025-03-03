@@ -1,4 +1,4 @@
-name: Build and push DEV docker image
+name: Build and push Main,Master docker image
 
 on:
   push:
