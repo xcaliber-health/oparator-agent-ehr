@@ -761,7 +761,7 @@ def create_ui(config, theme_name="custom_theme"):
                         """
                         <div style="height: 580px; width: 100%; margin: 0 !important; padding: 0 !important; display: flex; align-items: center; justify-content: center;">
                             <iframe 
-                                src="http://localhost:6081/vnc.html?autoconnect=true&resize=scale" 
+                                src="http://localhost:6080/vnc.html?autoconnect=true&resize=scale" 
                                 width="100%" 
                                 height="100%" 
                                 frameborder="0"
