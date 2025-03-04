@@ -770,7 +770,7 @@ def create_ui(config, theme_name="custom_theme"):
 
 
     with gr.Blocks(
-            title="EHR Operator", theme=theme_map[theme_name], css="body { display: flex; justify-content: center; } #main-container { max-width: 1200px; width: 100%; } footer { display: none !important; }"
+            title="EHR Operator", theme=theme_map.get(theme_name, Base()), css="body { display: flex; justify-content: center; } #main-container { max-width: 1200px; width: 100%; } footer { display: none !important; }"
     ) as demo:
         gr.HTML(custom_favicon)
         
