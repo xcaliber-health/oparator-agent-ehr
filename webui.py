@@ -522,7 +522,7 @@ async def run_with_stream(
             task=task,
             add_infos=add_infos,
             max_steps=max_steps,
-            use_vision=use_vision,
+            use_vision=True,
             max_actions_per_step=max_actions_per_step,
             tool_calling_method=tool_calling_method
         )
