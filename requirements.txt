@@ -1,5 +1,6 @@
-browser-use==0.1.37
+browser-use@git+https://github.com/ashutoshjha-caliber/browser-use.git@main
 pyperclip==1.9.0
 gradio==5.10.0
 json-repair
 langchain-mistralai==0.2.4
+langchain_google_genai

@@ -319,6 +319,7 @@ async def run_org_agent(
             _global_browser_context = await _global_browser.new_context(
                 config=BrowserContextConfig(
                     trace_path=save_trace_path if save_trace_path else None,
+                    highlight_elements=False,
                     save_recording_path=save_recording_path if save_recording_path else None,
                     no_viewport=False,
                     browser_window_size=BrowserContextWindowSize(
@@ -420,6 +421,7 @@ async def run_custom_agent(
                 config=BrowserContextConfig(
                     trace_path=save_trace_path if save_trace_path else None,
                     save_recording_path=save_recording_path if save_recording_path else None,
+                    highlight_elements=False,
                     no_viewport=False,
                     browser_window_size=BrowserContextWindowSize(
                         width=window_w, height=window_h
@@ -837,7 +839,7 @@ def create_ui(config, theme_name="custom_theme"):
             run_button.click(show_iframe_and_save, outputs=[iframe_row, save_button])
             
             # Save button click triggers POST request
-            save_button.click(send_post_request, inputs=[title, task], outputs=None)
+            save_button.click(fn=send_post_request, inputs=[title, task], outputs=None)
 
 
 

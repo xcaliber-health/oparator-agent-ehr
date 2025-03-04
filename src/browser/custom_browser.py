@@ -22,6 +22,8 @@ class CustomBrowser(Browser):
 
     async def new_context(
         self,
-        config: BrowserContextConfig = BrowserContextConfig()
+        config: BrowserContextConfig = BrowserContextConfig(
+            highlight_elements=False
+        )
     ) -> CustomBrowserContext:
         return CustomBrowserContext(config=config, browser=self)

@@ -14,6 +14,6 @@ class CustomBrowserContext(BrowserContext):
     def __init__(
         self,
         browser: "Browser",
-        config: BrowserContextConfig = BrowserContextConfig()
+        config: BrowserContextConfig = BrowserContextConfig(highlight_elements=False)
     ):
         super(CustomBrowserContext, self).__init__(browser=browser, config=config)
