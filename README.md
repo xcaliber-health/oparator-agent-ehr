@@ -1,5 +1,6 @@
 <img src="./assets/web-ui.png" alt="Browser Use Web UI" width="full"/>
 
+
 <br/>
 
 [![GitHub stars](https://img.shields.io/github/stars/browser-use/web-ui?style=social)](https://github.com/browser-use/web-ui/stargazers)
