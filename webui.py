@@ -79,7 +79,7 @@ def close_modal():
     return gr.update(visible=False)
 
 def show_iframe_and_save():
-    return gr.update(visible=True), gr.update(visible=True)
+    return gr.update(visible=True)
 
 async def stop_agent():
     """Request the agent to stop and update UI with enhanced feedback"""
@@ -793,14 +793,14 @@ def create_ui(config, theme_name="custom_theme"):
                             label="Operation Title",
                             lines=1,
                             placeholder="Enter your title here...",
-                            value="Sample Title",
+                            # value="Sample Title",
                         )
 
                         task = gr.Textbox(
                             label="Task Description",
                             lines=10,
                             placeholder="Enter your task here...",
-                            value="Your Task Here",
+                            # value="Your Task Here",
                             info="Describe what you want the agent to do",
                         )
 
@@ -834,7 +834,7 @@ def create_ui(config, theme_name="custom_theme"):
                     )
 
             # Button click will now reveal the iframe in the SAME row
-            run_button.click(show_iframe_and_save, outputs=[iframe_row, save_button])
+            run_button.click(show_iframe_and_save, outputs=[iframe_row])
             
             # Save button click triggers POST request
             save_button.click(send_post_request, inputs=[title, task], outputs=None)
