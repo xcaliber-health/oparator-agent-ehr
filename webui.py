@@ -770,30 +770,21 @@ def create_ui(config, theme_name="custom_theme"):
 
 
     with gr.Blocks(
-            title="EHR Operator", theme=theme_map.get(theme_name, Base()), css="body { display: flex; justify-content: center; border-color: #374151 !important;} #main-container { max-width: 1200px; width: 100%; border-color: #374151 !important;} footer { display: none !important; } input, textarea {color: white !important;}  input, textarea { color: white !important; border: 1px solid #6B7280 !important; border-radius: 6px !important; padding: 10px !important;"
+            title="EHR Operator",elem_id="main-block", theme=theme_map.get(theme_name, Base()), css="body { display: flex; justify-content: center; border-color: #374151 !important; width:100% !important } #main-block { width:100% !important } #main-container { max-width: 1200px; width: 100%; border-color: #374151 !important; display:flex; margin-top: 80px; justify-content: flex-start; align-items: flex-start;} #left-column { max-width: 40%; height: 100% !important;} #left-row { display:flex; justify-content: flex-start; align-items: flex-start; } #fixed-height-textbox textarea { height: 200px !important; overflow: auto; resize: none;} footer { display: none !important; } input, textarea {color: white !important;}  input, textarea { color: white !important; border: 1px solid #6B7280 !important; border-radius: 6px !important; padding: 10px !important;}"
     ) as demo:
-        gr.HTML(custom_favicon)
-        gr.HTML(
-            """
-            <script>
-            document.documentElement.classList.add("dark");  // Force dark mode in HTML
-            </script>
-            """
-        )
-        # with gr.Row():
-        #     gr.Markdown(
-        #         """
-        #         <h1 style="font-size: 2.5em; font-weight: 800; text-align: center;">🌐 EHR Operator</h1>
-        #         <h3 style="font-size: 1.5em; font-weight: 600; text-align: center;">Control your EHR via prompts</h3>
-        #         """,
-        #         elem_classes=["header-text"],
-        #     )
-
+        # gr.HTML(custom_favicon)
+        # gr.HTML(
+        #     """
+        #     <script>
+        #     document.documentElement.classList.add("dark");  // Force dark mode in HTML
+        #     </script>
+        #     """
+        # )
                 
         with gr.Blocks(elem_id="main-container"):
             # Main Row (Contains left-column and right-column iframe)
-            with gr.Row(equal_height=True):
-                with gr.Column(scale=1, min_width=480, elem_id="left-column"):
+            with gr.Row(equal_height=True,elem_id="left-row"):
+                with gr.Column(scale=1, elem_id="left-column"):
                     with gr.Group():
                         title = gr.Textbox(
                             label="Operation Title",
@@ -807,14 +798,15 @@ def create_ui(config, theme_name="custom_theme"):
                             lines=7,
                             placeholder="Enter your task here...",
                             # value="Your Task Here",
+                            elem_id="fixed-height-textbox",
                             info="Describe what you want the agent to do",
                         )
 
                         add_infos = gr.Textbox(
                             label="Additional Information",
-                            lines=2,
-                            placeholder="Add any helpful context or instructions...",
-                            info="Optional hints to help the LLM complete the task",
+                            lines=1,
+                            placeholder="Add any helpful context...",
+                            info="Optional hints to help the LLM",
                         )
 
                     with gr.Row():
