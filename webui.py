@@ -770,10 +770,16 @@ def create_ui(config, theme_name="custom_theme"):
 
 
     with gr.Blocks(
-            title="EHR Operator", theme=theme_map.get(theme_name, Base()), css="body { display: flex; justify-content: center; } #main-container { max-width: 1200px; width: 100%; } footer { display: none !important; }"
+            title="EHR Operator", theme=theme_map.get(theme_name, Base()), css="body { display: flex; justify-content: center; border-color: #374151 !important;} #main-container { max-width: 1200px; width: 100%; border-color: #374151 !important;} footer { display: none !important; } input, textarea {color: white !important;}  input, textarea { color: white !important; border: 1px solid #6B7280 !important; border-radius: 6px !important; padding: 10px !important;"
     ) as demo:
         gr.HTML(custom_favicon)
-        
+        gr.HTML(
+            """
+            <script>
+            document.documentElement.classList.add("dark");  // Force dark mode in HTML
+            </script>
+            """
+        )
         # with gr.Row():
         #     gr.Markdown(
         #         """
@@ -1661,7 +1667,7 @@ def main():
     config_dict = default_config()
 
     demo = create_ui(config_dict, theme_name=args.theme)
-    demo.queue(False)
+    demo.queue(False)  
     demo.launch(server_name=args.ip, server_port=args.port,favicon_path="logo.png",show_api=False,share=True)
 
 if __name__ == '__main__':
