@@ -804,7 +804,7 @@ def create_ui(config, theme_name="custom_theme"):
 
                         task = gr.Textbox(
                             label="Task Description",
-                            lines=10,
+                            lines=7,
                             placeholder="Enter your task here...",
                             # value="Your Task Here",
                             info="Describe what you want the agent to do",
@@ -812,7 +812,7 @@ def create_ui(config, theme_name="custom_theme"):
 
                         add_infos = gr.Textbox(
                             label="Additional Information",
-                            lines=4,
+                            lines=2,
                             placeholder="Add any helpful context or instructions...",
                             info="Optional hints to help the LLM complete the task",
                         )

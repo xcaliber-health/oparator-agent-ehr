@@ -45,7 +45,7 @@ class custom_theme(Base):
         # Apply Gradio's built-in dark theme settings
         super().set(
             # Dark Mode Backgrounds
-            body_background_fill="*neutral_900",  # Dark background
+            body_background_fill="#0c111d",  # Dark background
             block_background_fill="*neutral_800",  # Dark blocks
             block_border_color="*neutral_700",
             input_background_fill="*neutral_700",  # Dark input fields
